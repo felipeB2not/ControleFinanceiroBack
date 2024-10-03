@@ -1,6 +1,7 @@
 package com.example.financeiroApp.controller;
 
 import com.example.financeiroApp.models.Grupo;
+import com.example.financeiroApp.models.Lancamento;
 import com.example.financeiroApp.service.GrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,9 @@ public class GrupoController {
     }
 
     @PostMapping
-    public Grupo createGrupo(@RequestBody Grupo grupo) {
-        return grupoService.saveGrupo(grupo);
+    public ResponseEntity<Grupo> createGrupo(@RequestBody Grupo grupo) {
+        Grupo createdGrupo = grupoService.saveGrupo(grupo);
+        return ResponseEntity.status(201).body(createdGrupo); // Retorna 201 Created
     }
 
     @PutMapping("/{id}")
@@ -50,6 +52,28 @@ public class GrupoController {
         boolean deleted = grupoService.deleteGrupo(id);
         if (deleted) {
             return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Adicionar um lançamento ao grupo
+    @PostMapping("/{grupoId}/lancamentos")
+    public ResponseEntity<Lancamento> addLancamentoToGrupo(@PathVariable Long grupoId, @RequestBody Lancamento lancamento) {
+        Lancamento createdLancamento = grupoService.addLancamentoToGrupo(grupoId, lancamento);
+        if (createdLancamento != null) {
+            return ResponseEntity.status(201).body(createdLancamento); // Retorna 201 Created
+        } else {
+            return ResponseEntity.badRequest().build(); // Retorna 400 Bad Request
+        }
+    }
+
+    // Listar lançamentos do grupo
+    @GetMapping("/{grupoId}/lancamentos")
+    public ResponseEntity<List<Lancamento>> getLancamentosByGrupo(@PathVariable Long grupoId) {
+        List<Lancamento> lancamentos = grupoService.getLancamentosByGrupo(grupoId);
+        if (lancamentos != null && !lancamentos.isEmpty()) {
+            return ResponseEntity.ok(lancamentos);
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -24,35 +24,26 @@ public class PessoaController {
     @GetMapping("/{id}")
     public ResponseEntity<Pessoa> getPessoaById(@PathVariable Long id) {
         Pessoa pessoa = pessoaService.getPessoaById(id);
-        if (pessoa != null) {
-            return ResponseEntity.ok(pessoa);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return pessoa != null ? ResponseEntity.ok(pessoa) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public Pessoa createPessoa(@RequestBody Pessoa pessoa) {
-        return pessoaService.savePessoa(pessoa);
+    public ResponseEntity<Pessoa> createPessoa(@RequestBody Pessoa pessoa) {
+        try {
+            return ResponseEntity.ok(pessoaService.savePessoa(pessoa));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Pessoa> updatePessoa(@PathVariable Long id, @RequestBody Pessoa pessoa) {
         Pessoa updatedPessoa = pessoaService.updatePessoa(id, pessoa);
-        if (updatedPessoa != null) {
-            return ResponseEntity.ok(updatedPessoa);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return updatedPessoa != null ? ResponseEntity.ok(updatedPessoa) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePessoa(@PathVariable Long id) {
-        boolean deleted = pessoaService.deletePessoa(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return pessoaService.deletePessoa(id) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }

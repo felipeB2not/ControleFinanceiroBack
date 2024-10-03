@@ -4,21 +4,31 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
+import jakarta.persistence.Column;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String nome;
+    
     private String email;
+    
     private String cpf;
+    
     private String telefone;
 
-    public Pessoa() {
+    @OneToMany(mappedBy = "pessoa")
+    private List<Grupo> grupos;
 
+    // Construtor
+    
+    public Pessoa() {
     }
 
     // Getters e Setters
@@ -62,5 +72,12 @@ public class Pessoa {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-}
 
+    public List<Grupo> getGrupos() {
+        return grupos;
+    }
+
+    public void setGrupos(List<Grupo> grupos) {
+        this.grupos = grupos;
+    }
+}

@@ -24,6 +24,9 @@ public class PessoaService {
     }
 
     public Pessoa savePessoa(Pessoa pessoa) {
+        if (pessoaRepository.findByNome(pessoa.getNome()).isPresent()) {
+            throw new IllegalArgumentException("Já existe uma pessoa com o nome: " + pessoa.getNome());
+        }
         return pessoaRepository.save(pessoa);
     }
 
@@ -31,6 +34,10 @@ public class PessoaService {
         Optional<Pessoa> existingPessoa = pessoaRepository.findById(id);
         if (existingPessoa.isPresent()) {
             Pessoa pessoaToUpdate = existingPessoa.get();
+            if (!pessoaToUpdate.getNome().equals(pessoa.getNome()) &&
+                pessoaRepository.findByNome(pessoa.getNome()).isPresent()) {
+                throw new IllegalArgumentException("Já existe uma pessoa com o nome: " + pessoa.getNome());
+            }
             pessoaToUpdate.setNome(pessoa.getNome());
             pessoaToUpdate.setEmail(pessoa.getEmail());
             pessoaToUpdate.setCpf(pessoa.getCpf());

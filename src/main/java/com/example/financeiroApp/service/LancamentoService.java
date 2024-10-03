@@ -1,7 +1,9 @@
 package com.example.financeiroApp.service;
 
 import com.example.financeiroApp.models.Lancamento;
+import com.example.financeiroApp.models.Grupo; 
 import com.example.financeiroApp.repository.LancamentoRepository;
+import com.example.financeiroApp.repository.GrupoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class LancamentoService {
     @Autowired
     private LancamentoRepository lancamentoRepository;
 
+    @Autowired
+    private GrupoRepository grupoRepository;
+
     public List<Lancamento> getAllLancamentos() {
         return lancamentoRepository.findAll();
     }
@@ -23,8 +28,14 @@ public class LancamentoService {
         return lancamento.orElse(null);
     }
 
-    public Lancamento saveLancamento(Lancamento lancamento) {
-        return lancamentoRepository.save(lancamento);
+    public Lancamento saveLancamento(Lancamento lancamento, Long grupoId) {
+        Optional<Grupo> grupo = grupoRepository.findById(grupoId);
+        if (grupo.isPresent()) {
+            lancamento.setGrupo(grupo.get());
+            return lancamentoRepository.save(lancamento);
+        } else {
+            throw new IllegalArgumentException("Grupo não encontrado com ID: " + grupoId);
+        }
     }
 
     public Lancamento updateLancamento(Long id, Lancamento lancamento) {

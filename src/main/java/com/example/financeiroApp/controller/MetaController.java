@@ -31,17 +31,26 @@ public class MetaController {
     }
 
     @PostMapping
-    public Meta createMeta(@RequestBody Meta meta) {
-        return metaService.saveMeta(meta);
+    public ResponseEntity<Meta> createMeta(@RequestBody Meta meta) {
+        try {
+            Meta createdMeta = metaService.saveMeta(meta);
+            return ResponseEntity.status(201).body(createdMeta);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Meta> updateMeta(@PathVariable int id, @RequestBody Meta meta) {
-        Meta updatedMeta = metaService.updateMeta(id, meta);
-        if (updatedMeta != null) {
-            return ResponseEntity.ok(updatedMeta);
-        } else {
-            return ResponseEntity.notFound().build();
+        try {
+            Meta updatedMeta = metaService.updateMeta(id, meta);
+            if (updatedMeta != null) {
+                return ResponseEntity.ok(updatedMeta);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
