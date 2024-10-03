@@ -10,21 +10,15 @@ public class Lancamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate data;
-
+    private LocalDate data;  
     private BigDecimal valor;
+    private String tipo;  
+    private String nome;  
+    private String descricao;  
+    private String categoria;  
 
-    private String tipo;
-
-    private String nome;
-
-    private String categoria;
-
-    @Column(length = 500)
-    private String descricao;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "grupo_id", nullable = false) 
+    @ManyToOne
+    @JoinColumn(name = "grupo_id", nullable = false) // Adicionando a associação
     private Grupo grupo;
 
     public Lancamento() {
@@ -45,9 +39,6 @@ public class Lancamento {
     }
 
     public void setData(LocalDate data) {
-        if (data == null || data.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("A data deve ser válida e não pode ser futura.");
-        }
         this.data = data;
     }
 
@@ -56,9 +47,6 @@ public class Lancamento {
     }
 
     public void setValor(BigDecimal valor) {
-        if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("O valor deve ser maior que zero.");
-        }
         this.valor = valor;
     }
 
@@ -91,17 +79,14 @@ public class Lancamento {
     }
 
     public void setCategoria(String categoria) {
-        if (categoria == null || categoria.trim().isEmpty()) {
-            throw new IllegalArgumentException("A categoria não pode ser vazia.");
-        }
         this.categoria = categoria;
     }
 
     public Grupo getGrupo() {
-        return grupo;
+        return grupo; // Getter para o grupo
     }
 
     public void setGrupo(Grupo grupo) {
-        this.grupo = grupo;
+        this.grupo = grupo; // Setter para o grupo
     }
 }

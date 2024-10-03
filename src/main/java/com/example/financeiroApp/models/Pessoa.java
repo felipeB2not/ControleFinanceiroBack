@@ -1,11 +1,6 @@
 package com.example.financeiroApp.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
@@ -16,23 +11,23 @@ public class Pessoa {
 
     @Column(nullable = false, unique = true)
     private String nome;
-    
+
     private String email;
-    
+
     private String cpf;
-    
+
     private String telefone;
 
-    @OneToMany(mappedBy = "pessoa")
-    private List<Grupo> grupos;
+    @OneToMany(mappedBy = "pessoa") // mapeando pela propriedade "pessoa" em Grupo
+    private List<Grupo> grupos; // Adicionando a lista de grupos
 
     // Construtor
-    
+
     public Pessoa() {
     }
 
     // Getters e Setters
-
+    
     public Long getId() {
         return id;
     }
@@ -74,10 +69,10 @@ public class Pessoa {
     }
 
     public List<Grupo> getGrupos() {
-        return grupos;
+        return grupos; // Getter para a lista de grupos
     }
 
     public void setGrupos(List<Grupo> grupos) {
-        this.grupos = grupos;
+        this.grupos = grupos; // Setter para a lista de grupos
     }
 }

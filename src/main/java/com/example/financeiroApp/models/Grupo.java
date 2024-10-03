@@ -10,13 +10,17 @@ public class Grupo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nome;
 
     private String descricao;
 
+    @ManyToOne
+    @JoinColumn(name = "pessoa_id", nullable = false)
+    private Pessoa pessoa;
+
     @OneToMany(mappedBy = "grupo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Lancamento> lancamentos = new ArrayList<>();
+    private List<Lancamento> lancamentos = new ArrayList<>(); // Inicializa a lista
 
     public Grupo() {
     }
@@ -47,21 +51,26 @@ public class Grupo {
         this.descricao = descricao;
     }
 
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+
     public List<Lancamento> getLancamentos() {
-        return lancamentos;
+        return lancamentos; // Retorna a lista de lançamentos
     }
 
-    public void setLancamentos(List<Lancamento> lancamentos) {
-        this.lancamentos = lancamentos;
-    }
-
+    // Métodos para manipular os lançamentos
     public void addLancamento(Lancamento lancamento) {
         lancamentos.add(lancamento);
-        lancamento.setGrupo(this); 
+        lancamento.setGrupo(this); // Define o grupo no lançamento
     }
 
     public void removeLancamento(Lancamento lancamento) {
         lancamentos.remove(lancamento);
-        lancamento.setGrupo(null);
+        lancamento.setGrupo(null); // Remove a referência ao grupo no lançamento
     }
 }
