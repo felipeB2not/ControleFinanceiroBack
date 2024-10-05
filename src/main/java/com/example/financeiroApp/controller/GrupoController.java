@@ -2,7 +2,9 @@ package com.example.financeiroApp.controller;
 
 import com.example.financeiroApp.models.Grupo;
 import com.example.financeiroApp.models.Lancamento;
+import com.example.financeiroApp.models.Pessoa;
 import com.example.financeiroApp.service.GrupoService;
+import com.example.financeiroApp.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +13,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/grupos")
+@CrossOrigin(origins = "http://localhost:4200")
 public class GrupoController {
 
     @Autowired
     private GrupoService grupoService;
+
+    @Autowired
+    private PessoaRepository pessoaRepository;  // Adiciona o repositório de Pessoa
 
     @GetMapping
     public List<Grupo> getAllGrupos() {
@@ -33,9 +39,23 @@ public class GrupoController {
 
     @PostMapping
     public ResponseEntity<Grupo> createGrupo(@RequestBody Grupo grupo) {
+        // Verificar se o grupo está recebendo a pessoa corretamente
+        if (grupo.getPessoa() != null && grupo.getPessoa().getId() != null) {
+            Pessoa pessoa = pessoaRepository.findById(grupo.getPessoa().getId())
+                    .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
+
+            grupo.setPessoa(pessoa);
+        } else {
+            System.out.println("Erro: Pessoa não encontrada no grupo.");
+        }
+
+        // Verificar o objeto Grupo antes de salvar
+        System.out.println("Salvando grupo: " + grupo);
+
         Grupo createdGrupo = grupoService.saveGrupo(grupo);
-        return ResponseEntity.status(201).body(createdGrupo); // Retorna 201 Created
+        return ResponseEntity.status(201).body(createdGrupo);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Grupo> updateGrupo(@PathVariable Long id, @RequestBody Grupo grupo) {
